@@ -1,0 +1,4389 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "Entity Service External APIs",
+      "version": "1.2.9",
+      "x-uipath-version": "1.2.9"
+    },
+    "servers": [
+      {
+        "url": "https://localhost:65032"
+      }
+    ],
+    "paths": {
+      "/api/Entity/export": {
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_ExportSchema",
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/GetAllResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/import": {
+        "post": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_ImportSchema",
+          "parameters": [
+            {
+              "name": "importSchemaMode",
+              "in": "query",
+              "schema": {
+                "$ref": "#/components/schemas/ImportSchemaMode"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllResponse"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ImportSchemaResult"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity": {
+        "post": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_CreateEntity",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityCreateRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_GetEntities",
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/EntityRecord"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/autopilot/manage": {
+        "post": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_ManageEntityUsingAutopilot",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManageEntityUsingAutopilotRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ManageEntityUsingAutopilotResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/choiceset": {
+        "post": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_CreateChoiceSet",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityCreateRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_GetChoiceSets",
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/EntityRecord"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/{entityId}/functions": {
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_GetFunctions",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Function"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/functions": {
+        "post": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_CreateFunction",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FunctionCreateRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/functions/{functionId}": {
+        "put": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_UpdateFunction",
+          "parameters": [
+            {
+              "name": "functionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Function"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/Entity/apiworkflows": {
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_GetApiWorkflows",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/Entity/{entityId}/functions/{functionName}/parameters": {
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_GetFunctionParameters",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "functionName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/Entity/{entityId}/functions/{functionName}/execute": {
+        "post": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_ExecuteFunction",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "functionName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/Entity/{entityId}/metadata": {
+        "patch": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_UpdateEntityMetadata",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityMetadataUpdateRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/{entityId}/delete": {
+        "post": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_DeleteEntity",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/{entityId}": {
+        "delete": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_SoftDeleteEntity",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_GetEntityDetailByEntityId",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/EntityRecord"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/simple": {
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_GetSimpleEntities",
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/EntityRecord"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/all": {
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_GetEntitiesAndChoiceSets",
+          "parameters": [
+            {
+              "name": "start",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 1000
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/GetAllResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/stats": {
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_GetEntityStats",
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/EntityRecord"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/{entityId}/field": {
+        "post": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_CreateField",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldCreateRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/{entityId}/field/{fieldId}": {
+        "patch": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_UpdateFieldMetadata",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "fieldId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldMetadataUpdateRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_SoftDeleteField",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "fieldId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/{entityId}/field/{fieldId}/delete": {
+        "post": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_DeleteField",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "fieldId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Entity/entities": {
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_GetEntitiesWithRbacEnabledFields",
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/EntityResponse"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v2/Entity/convert": {
+        "post": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_ConvertEntity",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityConvertRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/v2/Entity/all": {
+        "get": {
+          "tags": [
+            "Entity"
+          ],
+          "operationId": "Entity_GetEntitiesAndChoiceSets_V2",
+          "parameters": [
+            {
+              "name": "start",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 1000
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/GetAllResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/fields/local/query": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_QueryByEntityNameForLocalFields",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityDataQueryRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/QueryResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/query": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_QueryByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityDataQueryRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/QueryResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/query": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_Query",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityDataQueryRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/QueryResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/query_expansion": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_QueryByEntityNameWithExpansion",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityDataQueryRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/QueryResponseJson"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/query_expansion": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_QueryWithExpansion",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityDataQueryRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/QueryResponseJson"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/read": {
+        "get": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_ReadByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "start",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/QueryResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/read": {
+        "get": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_Read",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "start",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/QueryResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/read/{recordId}": {
+        "get": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_ReadByIdByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "recordId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/read/{recordId}": {
+        "get": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_ReadById",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "recordId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/insert_bulk": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_InsertBulkByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/insert_bulk": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_InsertBulk",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/insert-batch": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_InsertBatch",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            },
+            {
+              "name": "failOnFirst",
+              "in": "query",
+              "schema": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BatchOperationResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/insert-batch": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_InsertBatchByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            },
+            {
+              "name": "failOnFirst",
+              "in": "query",
+              "schema": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BatchOperationResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/insert": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_InsertByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": { }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/insert": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_Insert",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": { }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/update-batch": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_UpdateBatch",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            },
+            {
+              "name": "failOnFirst",
+              "in": "query",
+              "schema": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BatchOperationResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/update-batch": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_UpdateBatchByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            },
+            {
+              "name": "failOnFirst",
+              "in": "query",
+              "schema": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BatchOperationResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/update/{recordId}": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_UpdateByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "recordId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": { }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/update/{recordId}": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_Update",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "recordId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": { }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/delete-batch": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_DeleteBatch",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "failOnFirst",
+              "in": "query",
+              "schema": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "uniqueItems": true,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BatchOperationResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/delete-batch": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_DeleteBatchByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "failOnFirst",
+              "in": "query",
+              "schema": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "uniqueItems": true,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BatchOperationResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/delete/{recordId}": {
+        "delete": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_DeleteByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "recordId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/delete/{recordId}": {
+        "delete": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_Delete",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "recordId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/delete": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_DeleteBulk",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "uniqueItems": true,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/delete": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_DeleteBulkByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "uniqueItems": true,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/choiceset/insert": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_InsertChoiceSet",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": { }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/choiceset/insert-batch": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_InsertChoiceSetInBatch",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "expansionLevel",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": { }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/choiceset/{recordId}/update": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_UpdateChoiceSetByName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "recordId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": { }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/choiceset/delete": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_DeleteChoicesetMemberBulk",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "uniqueItems": true,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/{entityName}/bulk-upload": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_BulkUploadByEntityName",
+          "parameters": [
+            {
+              "name": "entityName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "file": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                },
+                "encoding": {
+                  "file": {
+                    "style": "form"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BulkUploadResult"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/bulk-upload": {
+        "post": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_BulkUpload",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "file": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                },
+                "encoding": {
+                  "file": {
+                    "style": "form"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BulkUploadResult"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/EntityService/entity/{entityId}/bulk-upload-errors/{errorFileLink}": {
+        "get": {
+          "tags": [
+            "EntityService"
+          ],
+          "operationId": "EntityService_DownloadBulkUploadErrors",
+          "parameters": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            {
+              "name": "errorFileLink",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/octet-stream": {
+                  "schema": {
+                    "type": "file",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Environment/Provision": {
+        "post": {
+          "tags": [
+            "Environment"
+          ],
+          "operationId": "Environment_Provision",
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/IdRecord"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Environment": {
+        "get": {
+          "tags": [
+            "Environment"
+          ],
+          "operationId": "Environment_GetEnvironment",
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/GetEnvironmentResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Environment"
+          ],
+          "operationId": "Environment_DeleteEnvironment",
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Environment/Migrate": {
+        "post": {
+          "tags": [
+            "Environment"
+          ],
+          "operationId": "Environment_MigrateEnvironment",
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/Environment/ServiceTier": {
+        "post": {
+          "tags": [
+            "Environment"
+          ],
+          "operationId": "Environment_SetEnvironmentServiceTier",
+          "parameters": [
+            {
+              "name": "serviceTierId",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "BatchOperationFailureRecord": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "nullable": true
+            },
+            "record": {
+              "type": "object",
+              "additionalProperties": { },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "BatchOperationResponse": {
+          "type": "object",
+          "properties": {
+            "successRecords": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": { }
+              },
+              "nullable": true
+            },
+            "failureRecords": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BatchOperationFailureRecord"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "BulkUploadResult": {
+          "type": "object",
+          "properties": {
+            "totalRecords": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "insertedRecords": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "errorFileLink": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ChoiceSet": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "displayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "createdBy": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+            },
+            "createTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updateTime": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "updatedBy": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+            },
+            "isModelReserved": {
+              "type": "boolean"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": { }
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ChoiceSetUpdateDetail": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "updatedProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "addedMembers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "updatedMembers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "Conversation": {
+          "type": "object",
+          "properties": {
+            "role": {
+              "type": "string",
+              "nullable": true
+            },
+            "content": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "DataDirectionType": {
+          "enum": [
+            "ReadOnly",
+            "ReadAndWrite"
+          ],
+          "type": "string",
+          "x-enum-varnames": [
+            "ReadOnly",
+            "ReadAndWrite"
+          ]
+        },
+        "EntityConvertRequest": {
+          "type": "object",
+          "properties": {
+            "ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "EntityCreateRequest": {
+          "type": "object",
+          "properties": {
+            "displayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "entityDefinition": {
+              "$ref": "#/components/schemas/EntityDefinition"
+            }
+          },
+          "additionalProperties": false
+        },
+        "EntityDataQueryRequest": {
+          "type": "object",
+          "properties": {
+            "selectedFields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "start": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "limit": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "sortOptions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/SortOption"
+              },
+              "nullable": true
+            },
+            "expansions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Expansion"
+              },
+              "nullable": true
+            },
+            "filterGroup": {
+              "$ref": "#/components/schemas/QueryFilterGroup"
+            }
+          },
+          "additionalProperties": false
+        },
+        "EntityDefinition": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "tableName": {
+              "type": "string",
+              "nullable": true
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/FieldDefinition"
+              },
+              "nullable": true
+            },
+            "externalFields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ExternalSourceFields"
+              },
+              "nullable": true
+            },
+            "sourceJoinConditionDetails": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/SourceJoinConditionDetail"
+              },
+              "nullable": true
+            },
+            "sourceJoinCriterias": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/SourceJoinCriteria"
+              },
+              "nullable": true
+            },
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "isRbacEnabled": {
+              "type": "boolean"
+            },
+            "isModelReserved": {
+              "type": "boolean"
+            },
+            "entityType": {
+              "$ref": "#/components/schemas/EntityType"
+            }
+          },
+          "additionalProperties": false
+        },
+        "EntityField": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "isPrimaryKey": {
+              "type": "boolean"
+            },
+            "isUnique": {
+              "type": "boolean"
+            },
+            "isRequired": {
+              "type": "boolean"
+            },
+            "displayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "isRbacEnabled": {
+              "type": "boolean"
+            },
+            "fieldDisplayType": {
+              "$ref": "#/components/schemas/FieldDisplayType"
+            },
+            "sqlType": {
+              "$ref": "#/components/schemas/SqlType"
+            },
+            "selected": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "EntityMetadataUpdateRequest": {
+          "type": "object",
+          "properties": {
+            "entityId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "displayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "isRbacEnabled": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "EntityRecord": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "displayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "entityTypeId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "entityType": {
+              "$ref": "#/components/schemas/EntityType"
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/FieldDefinition"
+              },
+              "nullable": true
+            },
+            "externalFields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ExternalSourceFields"
+              },
+              "nullable": true
+            },
+            "sourceJoinCriterias": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/SourceJoinCriteria"
+              },
+              "nullable": true
+            },
+            "recordCount": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            },
+            "storageSizeInMB": {
+              "type": "number",
+              "format": "double",
+              "nullable": true
+            },
+            "usedStorageSizeInMB": {
+              "type": "number",
+              "format": "double",
+              "nullable": true
+            },
+            "attachmentSizeInByte": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            },
+            "isRbacEnabled": {
+              "type": "boolean"
+            },
+            "invalidIdentifiers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "isModelReserved": {
+              "type": "boolean"
+            },
+            "categoryId": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "createdBy": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "createTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updateTime": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "updatedBy": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "EntityRelationship": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "displayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/EntityField"
+              },
+              "nullable": true
+            },
+            "externalFields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ExternalEntityField"
+              },
+              "nullable": true
+            },
+            "sourceJoinCriterias": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/JoinCriteria"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "EntityResponse": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "readOnly": true
+            },
+            "name": {
+              "type": "string",
+              "nullable": true,
+              "readOnly": true
+            },
+            "displayName": {
+              "type": "string",
+              "nullable": true,
+              "readOnly": true
+            },
+            "isRbacEnabled": {
+              "type": "boolean",
+              "readOnly": true
+            },
+            "referenceEntityIds": {
+              "uniqueItems": true,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "nullable": true,
+              "readOnly": true
+            },
+            "fields": {
+              "uniqueItems": true,
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/FieldResponse"
+              },
+              "nullable": true,
+              "readOnly": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "EntityType": {
+          "enum": [
+            "Entity",
+            "ChoiceSet",
+            "InternalEntity",
+            "SystemEntity"
+          ],
+          "type": "string",
+          "x-enum-varnames": [
+            "Entity",
+            "ChoiceSet",
+            "InternalEntity",
+            "SystemEntity"
+          ]
+        },
+        "EntityUpdateDetail": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "updatedProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "addedFields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "skippedFields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "updatedFields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "fieldTypeConflicts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/FieldTypeConflict"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "EnvironmentState": {
+          "enum": [
+            "New",
+            "Ready",
+            "Disabled",
+            "Readonly",
+            "StorageFull",
+            "Deleted"
+          ],
+          "type": "string",
+          "x-enum-varnames": [
+            "New",
+            "Ready",
+            "Disabled",
+            "Readonly",
+            "StorageFull",
+            "Deleted"
+          ]
+        },
+        "Expansion": {
+          "type": "object",
+          "properties": {
+            "expandedField": {
+              "type": "string",
+              "nullable": true
+            },
+            "selectedFields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "expansions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Expansion"
+              },
+              "nullable": true
+            },
+            "alias": {
+              "type": "string",
+              "nullable": true
+            },
+            "leftTableName": {
+              "type": "string",
+              "nullable": true
+            },
+            "leftEntityId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "tableName": {
+              "type": "string",
+              "nullable": true
+            },
+            "expandedFieldInternal": {
+              "type": "string",
+              "nullable": true
+            },
+            "selectedFieldsInternal": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "entity": {
+              "$ref": "#/components/schemas/EntityDefinition"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ExternalConnection": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "connectionId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "elementInstanceId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "folderKey": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "connectorKey": {
+              "type": "string",
+              "nullable": true
+            },
+            "connectorName": {
+              "type": "string",
+              "nullable": true
+            },
+            "connectionName": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ExternalConnectionDetail": {
+          "type": "object",
+          "properties": {
+            "connectionId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "connectionName": {
+              "type": "string",
+              "nullable": true
+            },
+            "connectorName": {
+              "type": "string",
+              "nullable": true
+            },
+            "elementInstanceId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "connectorKey": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ExternalEntityField": {
+          "type": "object",
+          "properties": {
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ExternalFieldDetail"
+              },
+              "nullable": true
+            },
+            "externalConnectionDetail": {
+              "$ref": "#/components/schemas/ExternalConnectionDetail"
+            },
+            "externalObjectDetail": {
+              "$ref": "#/components/schemas/ExternalObjectDetail"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ExternalField": {
+          "type": "object",
+          "properties": {
+            "fieldDefinition": {
+              "$ref": "#/components/schemas/FieldDefinition"
+            },
+            "externalFieldMappingDetail": {
+              "$ref": "#/components/schemas/ExternalFieldMapping"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ExternalFieldDetail": {
+          "type": "object",
+          "properties": {
+            "fieldDefinition": {
+              "$ref": "#/components/schemas/EntityField"
+            },
+            "externalFieldMappingDetail": {
+              "$ref": "#/components/schemas/ExternalFieldMappingDetail"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ExternalFieldMapping": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "externalFieldName": {
+              "type": "string",
+              "nullable": true
+            },
+            "externalFieldDisplayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "externalObjectId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "externalFieldType": {
+              "type": "string",
+              "nullable": true
+            },
+            "internalFieldId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "directionType": {
+              "$ref": "#/components/schemas/DataDirectionType"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ExternalFieldMappingDetail": {
+          "type": "object",
+          "properties": {
+            "externalFieldName": {
+              "type": "string",
+              "nullable": true
+            },
+            "externalFieldDisplayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "externalFieldType": {
+              "type": "string",
+              "nullable": true
+            },
+            "directionType": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ExternalObject": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "externalObjectName": {
+              "type": "string",
+              "nullable": true
+            },
+            "externalObjectDisplayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "primaryKey": {
+              "type": "string",
+              "nullable": true
+            },
+            "externalConnectionId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "entityId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "isPrimarySource": {
+              "type": "boolean"
+            },
+            "method": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ExternalObjectDetail": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "nullable": true
+            },
+            "externalObjectName": {
+              "type": "string",
+              "nullable": true
+            },
+            "externalObjectDisplayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "primaryKey": {
+              "type": "string",
+              "nullable": true
+            },
+            "method": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ExternalSourceFields": {
+          "type": "object",
+          "properties": {
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ExternalField"
+              },
+              "nullable": true
+            },
+            "externalObjectDetail": {
+              "$ref": "#/components/schemas/ExternalObject"
+            },
+            "externalConnectionDetail": {
+              "$ref": "#/components/schemas/ExternalConnection"
+            }
+          },
+          "additionalProperties": false
+        },
+        "Field": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "definition": {
+              "$ref": "#/components/schemas/FieldDefinition"
+            }
+          },
+          "additionalProperties": false
+        },
+        "FieldCreateRequest": {
+          "type": "object",
+          "properties": {
+            "entityId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "fieldDefinition": {
+              "$ref": "#/components/schemas/FieldDefinition"
+            }
+          },
+          "additionalProperties": false
+        },
+        "FieldDefinition": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "isPrimaryKey": {
+              "type": "boolean"
+            },
+            "isForeignKey": {
+              "type": "boolean"
+            },
+            "isExternalField": {
+              "type": "boolean"
+            },
+            "isHiddenField": {
+              "type": "boolean"
+            },
+            "fieldCategoryId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "isUnique": {
+              "type": "boolean"
+            },
+            "referenceName": {
+              "type": "string",
+              "nullable": true
+            },
+            "referenceEntity": {
+              "$ref": "#/components/schemas/EntityRecord"
+            },
+            "referenceChoiceSet": {
+              "$ref": "#/components/schemas/EntityRecord"
+            },
+            "referenceField": {
+              "$ref": "#/components/schemas/Field"
+            },
+            "referenceType": {
+              "$ref": "#/components/schemas/ReferenceType"
+            },
+            "sqlType": {
+              "$ref": "#/components/schemas/SqlType"
+            },
+            "isRequired": {
+              "type": "boolean"
+            },
+            "displayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "createTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "createdBy": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "updateTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedBy": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "isSystemField": {
+              "type": "boolean"
+            },
+            "fieldDisplayType": {
+              "$ref": "#/components/schemas/FieldDisplayType"
+            },
+            "choiceSetId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "defaultValue": {
+              "type": "string",
+              "nullable": true
+            },
+            "isAttachment": {
+              "type": "boolean"
+            },
+            "isRbacEnabled": {
+              "type": "boolean"
+            },
+            "isModelReserved": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "FieldDisplayType": {
+          "enum": [
+            "Basic",
+            "Relationship",
+            "File",
+            "ChoiceSetSingle",
+            "ChoiceSetMultiple",
+            "AutoNumber"
+          ],
+          "type": "string",
+          "x-enum-varnames": [
+            "Basic",
+            "Relationship",
+            "File",
+            "ChoiceSetSingle",
+            "ChoiceSetMultiple",
+            "AutoNumber"
+          ]
+        },
+        "FieldMetadataUpdateRequest": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "displayName": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "isRequired": {
+              "type": "boolean"
+            },
+            "defaultValue": {
+              "type": "string",
+              "nullable": true
+            },
+            "sqlType": {
+              "$ref": "#/components/schemas/SqlType"
+            },
+            "referenceFieldId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "isRbacEnabled": {
+              "type": "boolean"
+            },
+            "isUnique": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "FieldResponse": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "displayName": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "FieldTypeConflict": {
+          "type": "object",
+          "properties": {
+            "fieldName": {
+              "type": "string",
+              "nullable": true
+            },
+            "currentType": {
+              "type": "string",
+              "nullable": true
+            },
+            "newType": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "FilterLogicalOperator": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer",
+          "format": "int32",
+          "x-enum-varnames": [
+            "AND",
+            "OR"
+          ]
+        },
+        "Function": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "functionCode": {
+              "type": "string",
+              "nullable": true
+            },
+            "functionName": {
+              "type": "string",
+              "nullable": true
+            },
+            "entityId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "apiWFProcessId": {
+              "type": "string",
+              "nullable": true
+            },
+            "parameters": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "FunctionCreateRequest": {
+          "type": "object",
+          "properties": {
+            "entityId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "functionCode": {
+              "type": "string",
+              "nullable": true
+            },
+            "functionName": {
+              "type": "string",
+              "nullable": true
+            },
+            "apiWFProcessId": {
+              "type": "string",
+              "nullable": true
+            },
+            "parameters": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "GetAllResponse": {
+          "type": "object",
+          "properties": {
+            "entities": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/EntityRecord"
+              },
+              "nullable": true
+            },
+            "choicesets": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChoiceSet"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "GetEnvironmentResponse": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "readOnly": true
+            },
+            "state": {
+              "$ref": "#/components/schemas/EnvironmentState"
+            },
+            "serviceTierName": {
+              "type": "string",
+              "nullable": true,
+              "readOnly": true
+            },
+            "createdBy": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true,
+              "readOnly": true
+            },
+            "createTime": {
+              "type": "string",
+              "format": "date-time",
+              "readOnly": true
+            },
+            "updateTime": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true,
+              "readOnly": true
+            },
+            "updatedBy": {
+              "type": "string",
+              "format": "uuid",
+              "nullable": true,
+              "readOnly": true
+            },
+            "tierMigration": {
+              "$ref": "#/components/schemas/TierMigration"
+            },
+            "regionMigration": {
+              "$ref": "#/components/schemas/RegionMigration"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ISConnection": {
+          "type": "object",
+          "properties": {
+            "connectionId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "connectionName": {
+              "type": "string",
+              "nullable": true
+            },
+            "connectorName": {
+              "type": "string",
+              "nullable": true
+            },
+            "connectorDescription": {
+              "type": "string",
+              "nullable": true
+            },
+            "state": {
+              "type": "string",
+              "nullable": true
+            },
+            "lastUsedTime": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "isDefault": {
+              "type": "boolean",
+              "nullable": true
+            },
+            "connectionElementInstanceId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "connectorKey": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "IdRecord": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ImportSchemaMode": {
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "type": "integer",
+          "format": "int32",
+          "x-enum-varnames": [
+            "AppendToExisting",
+            "SkipExisting",
+            "Replace",
+            "CreateNew"
+          ]
+        },
+        "ImportSchemaResult": {
+          "type": "object",
+          "properties": {
+            "addedEntities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "skippedEntities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "updatedEntities": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/EntityUpdateDetail"
+              },
+              "nullable": true
+            },
+            "addedChoicesets": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "skippedChoicesets": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "updatedChoicesets": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChoiceSetUpdateDetail"
+              },
+              "nullable": true
+            },
+            "idMappings": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "format": "uuid",
+                "nullable": true
+              },
+              "nullable": true
+            },
+            "idNameMappings": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "format": "uuid",
+                "nullable": true
+              },
+              "nullable": true
+            },
+            "cdmIdNameMappings": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "format": "uuid",
+                "nullable": true
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "JoinCriteria": {
+          "type": "object",
+          "properties": {
+            "sourceObjectId": {
+              "type": "string",
+              "nullable": true
+            },
+            "joinFieldName": {
+              "type": "string",
+              "nullable": true
+            },
+            "joinType": {
+              "type": "string",
+              "nullable": true
+            },
+            "relatedSourceObjectId": {
+              "type": "string",
+              "nullable": true
+            },
+            "relatedSourceFieldName": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "JoinType": {
+          "enum": [
+            "LeftJoin"
+          ],
+          "type": "string",
+          "x-enum-varnames": [
+            "LeftJoin"
+          ]
+        },
+        "ManageEntityUsingAutopilotRequest": {
+          "type": "object",
+          "properties": {
+            "conversations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Conversation"
+              },
+              "nullable": true
+            },
+            "query": {
+              "type": "string",
+              "nullable": true
+            },
+            "entityRelationship": {
+              "$ref": "#/components/schemas/EntityRelationship"
+            },
+            "connections": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ISConnection"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ManageEntityUsingAutopilotResponse": {
+          "type": "object",
+          "properties": {
+            "isSuccess": {
+              "type": "boolean"
+            },
+            "message": {
+              "type": "string",
+              "nullable": true
+            },
+            "action": {
+              "type": "string",
+              "nullable": true
+            },
+            "entityRelationship": {
+              "$ref": "#/components/schemas/EntityRelationship"
+            }
+          },
+          "additionalProperties": false
+        },
+        "QueryFilter": {
+          "type": "object",
+          "properties": {
+            "fieldName": {
+              "type": "string",
+              "nullable": true
+            },
+            "operator": {
+              "type": "string",
+              "nullable": true
+            },
+            "value": {
+              "type": "string",
+              "nullable": true
+            },
+            "valueList": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "QueryFilterGroup": {
+          "type": "object",
+          "properties": {
+            "logicalOperator": {
+              "$ref": "#/components/schemas/FilterLogicalOperator"
+            },
+            "continueLogicalOperator": {
+              "$ref": "#/components/schemas/FilterLogicalOperator"
+            },
+            "queryFilters": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/QueryFilter"
+              },
+              "nullable": true
+            },
+            "filterGroups": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/QueryFilterGroup"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "QueryResponse": {
+          "type": "object",
+          "properties": {
+            "totalRecordCount": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": { }
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "QueryResponseJson": {
+          "type": "object",
+          "properties": {
+            "jsonValue": {
+              "type": "string",
+              "nullable": true
+            },
+            "totalRecordCount": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": { }
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ReferenceType": {
+          "enum": [
+            "ManyToOne"
+          ],
+          "type": "string",
+          "x-enum-varnames": [
+            "ManyToOne"
+          ]
+        },
+        "Region": {
+          "enum": [
+            "WestUS",
+            "WestEU",
+            "EastJP",
+            "CentralCA",
+            "EastAU",
+            "SoutheastAsia",
+            "OnPremCustomer"
+          ],
+          "type": "string",
+          "x-enum-varnames": [
+            "WestUS",
+            "WestEU",
+            "EastJP",
+            "CentralCA",
+            "EastAU",
+            "SoutheastAsia",
+            "OnPremCustomer"
+          ]
+        },
+        "RegionMigration": {
+          "type": "object",
+          "properties": {
+            "isActive": {
+              "type": "boolean"
+            },
+            "sourceRegion": {
+              "$ref": "#/components/schemas/Region"
+            },
+            "targetRegion": {
+              "$ref": "#/components/schemas/Region"
+            }
+          },
+          "additionalProperties": false
+        },
+        "SortOption": {
+          "type": "object",
+          "properties": {
+            "fieldName": {
+              "type": "string",
+              "nullable": true
+            },
+            "isDescending": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "SourceJoinConditionDetail": {
+          "type": "object",
+          "properties": {
+            "sourceObjectName": {
+              "type": "string",
+              "nullable": true
+            },
+            "sourceJoinField": {
+              "type": "string",
+              "nullable": true
+            },
+            "sourceObjectConnectionId": {
+              "type": "string",
+              "nullable": true
+            },
+            "joinType": {
+              "$ref": "#/components/schemas/JoinType"
+            },
+            "relatedSourceObjectName": {
+              "type": "string",
+              "nullable": true
+            },
+            "relatedSourceJoinField": {
+              "type": "string",
+              "nullable": true
+            },
+            "relatedSourceObjectConnectionId": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "SourceJoinCriteria": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "entityId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "sourceObjectId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "joinFieldName": {
+              "type": "string",
+              "nullable": true
+            },
+            "joinType": {
+              "$ref": "#/components/schemas/JoinType"
+            },
+            "relatedSourceObjectId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "relatedSourceFieldName": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "SqlType": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "$ref": "#/components/schemas/SqlTypeName"
+            },
+            "lengthLimit": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            },
+            "maxValue": {
+              "type": "number",
+              "format": "decimal",
+              "nullable": true
+            },
+            "minValue": {
+              "type": "number",
+              "format": "decimal",
+              "nullable": true
+            },
+            "decimalPrecision": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "SqlTypeName": {
+          "enum": [
+            "UNIQUEIDENTIFIER",
+            "NVARCHAR",
+            "INT",
+            "DATETIME2",
+            "DATETIMEOFFSET",
+            "FLOAT",
+            "REAL",
+            "BIGINT",
+            "DATE",
+            "BIT",
+            "DECIMAL",
+            "MULTILINE"
+          ],
+          "type": "string",
+          "x-enum-varnames": [
+            "UNIQUEIDENTIFIER",
+            "NVARCHAR",
+            "INT",
+            "DATETIME2",
+            "DATETIMEOFFSET",
+            "FLOAT",
+            "REAL",
+            "BIGINT",
+            "DATE",
+            "BIT",
+            "DECIMAL",
+            "MULTILINE"
+          ]
+        },
+        "TierMigration": {
+          "type": "object",
+          "properties": {
+            "isActive": {
+              "type": "boolean"
+            },
+            "source": {
+              "type": "string",
+              "nullable": true
+            },
+            "target": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "description": "JWT Authorization header using the Bearer scheme.",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    },
+    "security": [
+      {
+        "bearerAuth": [ ]
+      }
+    ]
+  }
+  
