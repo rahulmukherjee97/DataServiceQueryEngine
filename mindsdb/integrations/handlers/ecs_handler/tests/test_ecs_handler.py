@@ -1,16 +1,19 @@
 import pytest
 import json
+import threading
+import time
 from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 from mindsdb_sql.parser.ast import Identifier, Select, Star, BinaryOperation, Constant
 from mindsdb.integrations.handlers.ecs_handler.ecs_handler import ECSHandler
 from mindsdb.integrations.libs.response import RESPONSE_TYPE
+from .mock_ecs_server import start_server
 
 
 HANDLER_KWARGS = {
     "connection_data": {
-        "url": "https://test.uipath.com/ecs",
+        "url": "http://localhost:5000",
         "tenant": "test_tenant",
         "username": "test_user",
         "password": "test_password",
@@ -32,17 +35,20 @@ def load_test_data():
 
 
 @pytest.fixture(scope="module")
-def handler():
+def mock_server():
+    """Start mock server in a separate thread"""
+    server_thread = threading.Thread(target=start_server, daemon=True)
+    server_thread.start()
+    time.sleep(1)  # Wait for server to start
+    yield
+    # Server will be automatically stopped when the thread is killed
+
+
+@pytest.fixture(scope="module")
+def handler(mock_server):
     """Create a handler instance for testing"""
-    with patch('mindsdb.integrations.handlers.ecs_handler.ecs_handler.ECSWrapper') as mock_wrapper:
-        # Configure the mock wrapper
-        mock_instance = mock_wrapper.return_value
-        mock_instance.check_connection.return_value = True
-        mock_instance.get_contexts.return_value = load_test_data()
-        
-        # Create handler instance
-        handler = ECSHandler("ecs_handler", **HANDLER_KWARGS)
-        yield handler
+    handler = ECSHandler("ecs_handler", **HANDLER_KWARGS)
+    yield handler
 
 
 def check_valid_response(res):
@@ -68,6 +74,12 @@ class TestECSConnection:
         """Test disconnection"""
         handler.disconnect()
         assert handler.is_connected is False, "failed to disconnect"
+
+    def test_missing_required_params(self):
+        """Test initialization with missing required parameters"""
+        with pytest.raises(ValueError) as exc_info:
+            ECSHandler("ecs_handler", connection_data={})
+        assert "Missing required connection parameters" in str(exc_info.value)
 
 
 class TestECSQuery:
@@ -105,6 +117,35 @@ class TestECSQuery:
         check_valid_response(res)
         assert all(res.data_frame["type"] == "String"), "expected all rows to have type 'String'"
 
+    def test_get_context_by_id(self, handler):
+        """Test getting a specific context by ID"""
+        query = "get-context 1"
+        response = handler.native_query(query)
+        check_valid_response(response)
+        assert len(response.data_frame) == 1, "expected exactly one row"
+        assert response.data_frame.iloc[0]["id"] == "1", "expected context with ID 1"
+
+    def test_create_context(self, handler):
+        """Test creating a new context"""
+        query = 'create-context {"name": "New Context", "type": "String", "value": "new value"}'
+        response = handler.native_query(query)
+        check_valid_response(response)
+        assert response.data_frame.iloc[0]["name"] == "New Context"
+
+    def test_update_context(self, handler):
+        """Test updating an existing context"""
+        query = 'update-context 1 {"name": "Updated Context", "value": "updated value"}'
+        response = handler.native_query(query)
+        check_valid_response(response)
+        assert response.data_frame.iloc[0]["name"] == "Updated Context"
+
+    def test_delete_context(self, handler):
+        """Test deleting a context"""
+        query = "delete-context 1"
+        response = handler.native_query(query)
+        check_valid_response(response)
+        assert response.data_frame.iloc[0]["success"] is True
+
 
 class TestECSTables:
     def test_get_tables(self, handler):
@@ -120,6 +161,12 @@ class TestECSTables:
         check_valid_response(res)
         columns = res.data_frame["name"].tolist()
         assert set(columns) == set(expected_columns), f"expected columns {expected_columns}, but got {columns}"
+
+    def test_get_columns_invalid_table(self, handler):
+        """Test getting columns for non-existent table"""
+        res = handler.get_columns("invalid_table")
+        assert res.resp_type == RESPONSE_TYPE.ERROR
+        assert "Unknown table" in res.error_message
 
 
 class TestECSErrorHandling:
@@ -138,4 +185,18 @@ class TestECSErrorHandling:
         query = "invalid-command"
         res = handler.native_query(query)
         assert res.resp_type == RESPONSE_TYPE.ERROR, "expected error response for invalid query"
-        assert "error" in res.error_message.lower(), "expected error message for invalid query" 
+        assert "error" in res.error_message.lower(), "expected error message for invalid query"
+
+    def test_invalid_json_in_create(self, handler):
+        """Test handling of invalid JSON in create context"""
+        query = "create-context invalid-json"
+        res = handler.native_query(query)
+        assert res.resp_type == RESPONSE_TYPE.ERROR
+        assert "error" in res.error_message.lower()
+
+    def test_missing_id_in_update(self, handler):
+        """Test handling of missing ID in update context"""
+        query = "update-context"
+        res = handler.native_query(query)
+        assert res.resp_type == RESPONSE_TYPE.ERROR
+        assert "error" in res.error_message.lower() 
