@@ -2,6 +2,7 @@ from typing import Optional, Any, List, Dict
 from mindsdb_sql.parser.ast.base import ASTNode
 from mindsdb_sql.parser.ast import Select, Identifier, BinaryOperation, Constant
 import pandas as pd
+from datetime import datetime
 
 from mindsdb.integrations.libs.base import DatabaseHandler
 from mindsdb.integrations.libs.response import (
@@ -10,13 +11,13 @@ from mindsdb.integrations.libs.response import (
     RESPONSE_TYPE
 )
 from mindsdb.utilities import log
-from .ecs_wrapper import ECSWrapper
+from .ecs_wrapper import ECSWrapper, ECSWrapperError, ECSConnectionError, ECSOperationError
 
 logger = log.getLogger(__name__)
 
 class ECSHandler(DatabaseHandler):
     """
-    This handler handles connection and execution of the ECS statements.
+    This handler handles connection and execution of the UiPath Enterprise Context Service statements.
     """
     name = 'ecs'
 
@@ -32,10 +33,9 @@ class ECSHandler(DatabaseHandler):
         self.connection_data = connection_data
         self.is_connected = False
         self.connection = None
-        self.cluster = connection_data.get('cluster')
         
         # Validate required connection parameters
-        required_params = ['access_key', 'secret_key', 'region', 'cluster']
+        required_params = ['url', 'tenant', 'username', 'password']
         missing_params = [param for param in required_params if param not in connection_data]
         if missing_params:
             raise ValueError(f"Missing required connection parameters: {', '.join(missing_params)}")
@@ -51,15 +51,19 @@ class ECSHandler(DatabaseHandler):
 
         try:
             self.connection = ECSWrapper(
-                access_key=self.connection_data['access_key'],
-                secret_key=self.connection_data['secret_key'],
-                region=self.connection_data['region'],
-                cluster=self.connection_data['cluster']
+                url=self.connection_data['url'],
+                tenant=self.connection_data['tenant'],
+                username=self.connection_data['username'],
+                password=self.connection_data['password'],
+                organization_unit=self.connection_data.get('organization_unit')
             )
             self.is_connected = True
             return StatusResponse(True)
-        except Exception as e:
+        except ECSConnectionError as e:
             logger.error(f'Error connecting to ECS: {e}!')
+            return StatusResponse(False, error_message=str(e))
+        except Exception as e:
+            logger.error(f'Unexpected error connecting to ECS: {e}!')
             return StatusResponse(False, error_message=str(e))
 
     def disconnect(self):
@@ -112,21 +116,81 @@ class ECSHandler(DatabaseHandler):
             # Get the table name from the FROM clause
             table_name = query.from_table.parts[-1]
             
+            # Parse WHERE clause for filtering
+            filters = self._parse_where_clause(query.where)
+            
             # Handle different table types
-            if table_name == 'clusters':
-                clusters = self.connection.list_clusters()
-                return Response(RESPONSE_TYPE.TABLE, data_frame=pd.DataFrame(clusters))
-            elif table_name == 'services':
-                services = self.connection.list_services()
-                return Response(RESPONSE_TYPE.TABLE, data_frame=pd.DataFrame(services))
-            elif table_name == 'tasks':
-                tasks = self.connection.list_tasks()
-                return Response(RESPONSE_TYPE.TABLE, data_frame=pd.DataFrame(tasks))
+            if table_name == 'contexts':
+                contexts = self.connection.get_contexts()
+                df = pd.DataFrame(contexts)
+                if filters:
+                    df = self._apply_filters(df, filters)
+                return Response(RESPONSE_TYPE.TABLE, data_frame=df)
             else:
                 return Response(RESPONSE_TYPE.ERROR, error_message=f"Unknown table: {table_name}")
-        except Exception as e:
+        except ECSOperationError as e:
             logger.error(f'Error executing SELECT query: {e}!')
             return Response(RESPONSE_TYPE.ERROR, error_message=str(e))
+        except Exception as e:
+            logger.error(f'Unexpected error executing SELECT query: {e}!')
+            return Response(RESPONSE_TYPE.ERROR, error_message=str(e))
+
+    def _parse_where_clause(self, where_clause: Optional[ASTNode]) -> List[Dict[str, Any]]:
+        """
+        Parse WHERE clause into a list of filter conditions.
+        Args:
+            where_clause (ASTNode): The WHERE clause to parse
+        Returns:
+            List[Dict[str, Any]]: List of filter conditions
+        """
+        if not where_clause:
+            return []
+
+        filters = []
+        if isinstance(where_clause, BinaryOperation):
+            if where_clause.op == 'and':
+                filters.extend(self._parse_where_clause(where_clause.left))
+                filters.extend(self._parse_where_clause(where_clause.right))
+            elif where_clause.op in ('=', '>', '<', '>=', '<=', '!='):
+                if isinstance(where_clause.left, Identifier) and isinstance(where_clause.right, Constant):
+                    filters.append({
+                        'column': where_clause.left.parts[-1],
+                        'operator': where_clause.op,
+                        'value': where_clause.right.value
+                    })
+        return filters
+
+    def _apply_filters(self, df: pd.DataFrame, filters: List[Dict[str, Any]]) -> pd.DataFrame:
+        """
+        Apply filters to a DataFrame.
+        Args:
+            df (pd.DataFrame): The DataFrame to filter
+            filters (List[Dict[str, Any]]): List of filter conditions
+        Returns:
+            pd.DataFrame: Filtered DataFrame
+        """
+        for filter_condition in filters:
+            column = filter_condition['column']
+            operator = filter_condition['operator']
+            value = filter_condition['value']
+
+            if column not in df.columns:
+                continue
+
+            if operator == '=':
+                df = df[df[column] == value]
+            elif operator == '>':
+                df = df[df[column] > value]
+            elif operator == '<':
+                df = df[df[column] < value]
+            elif operator == '>=':
+                df = df[df[column] >= value]
+            elif operator == '<=':
+                df = df[df[column] <= value]
+            elif operator == '!=':
+                df = df[df[column] != value]
+
+        return df
 
     def native_query(self, query: str) -> Response:
         """
@@ -143,9 +207,21 @@ class ECSHandler(DatabaseHandler):
             result = self.connection.execute_command(query)
             if 'error' in result:
                 return Response(RESPONSE_TYPE.ERROR, error_message=result['error'])
-            return Response(RESPONSE_TYPE.TABLE, data_frame=pd.DataFrame(result))
-        except Exception as e:
+            
+            # Convert result to DataFrame
+            if 'contexts' in result:
+                df = pd.DataFrame(result['contexts'])
+            elif 'context' in result:
+                df = pd.DataFrame([result['context']])
+            else:
+                df = pd.DataFrame(result)
+            
+            return Response(RESPONSE_TYPE.TABLE, data_frame=df)
+        except ECSOperationError as e:
             logger.error(f'Error running query: {query} on ECS: {e}!')
+            return Response(RESPONSE_TYPE.ERROR, error_message=str(e))
+        except Exception as e:
+            logger.error(f'Unexpected error running query: {query} on ECS: {e}!')
             return Response(RESPONSE_TYPE.ERROR, error_message=str(e))
 
     def query(self, query: ASTNode) -> Response:
@@ -165,8 +241,11 @@ class ECSHandler(DatabaseHandler):
                 return self._handle_select(query)
             else:
                 return Response(RESPONSE_TYPE.ERROR, error_message=f"Query type {type(query)} not supported")
-        except Exception as e:
+        except ECSOperationError as e:
             logger.error(f'Error running query: {query} on ECS: {e}!')
+            return Response(RESPONSE_TYPE.ERROR, error_message=str(e))
+        except Exception as e:
+            logger.error(f'Unexpected error running query: {query} on ECS: {e}!')
             return Response(RESPONSE_TYPE.ERROR, error_message=str(e))
 
     def get_tables(self) -> Response:
@@ -182,16 +261,8 @@ class ECSHandler(DatabaseHandler):
             # Define the available "tables" in ECS
             tables = [
                 {
-                    'name': 'clusters',
-                    'description': 'List of ECS clusters'
-                },
-                {
-                    'name': 'services',
-                    'description': 'List of services in the cluster'
-                },
-                {
-                    'name': 'tasks',
-                    'description': 'List of tasks in the cluster'
+                    'name': 'contexts',
+                    'description': 'List of contexts in ECS'
                 }
             ]
             return Response(RESPONSE_TYPE.TABLE, data_frame=pd.DataFrame(tables))
@@ -213,26 +284,18 @@ class ECSHandler(DatabaseHandler):
         try:
             # Define columns for each table type
             columns = {
-                'clusters': [
-                    {'name': 'clusterArn', 'type': 'string'},
-                    {'name': 'clusterName', 'type': 'string'},
-                    {'name': 'status', 'type': 'string'},
-                    {'name': 'activeServicesCount', 'type': 'integer'},
-                    {'name': 'runningTasksCount', 'type': 'integer'}
-                ],
-                'services': [
-                    {'name': 'serviceArn', 'type': 'string'},
-                    {'name': 'serviceName', 'type': 'string'},
-                    {'name': 'status', 'type': 'string'},
-                    {'name': 'desiredCount', 'type': 'integer'},
-                    {'name': 'runningCount', 'type': 'integer'}
-                ],
-                'tasks': [
-                    {'name': 'taskArn', 'type': 'string'},
-                    {'name': 'taskDefinition', 'type': 'string'},
-                    {'name': 'status', 'type': 'string'},
-                    {'name': 'startedAt', 'type': 'datetime'},
-                    {'name': 'stoppedAt', 'type': 'datetime'}
+                'contexts': [
+                    {'name': 'id', 'type': 'string'},
+                    {'name': 'name', 'type': 'string'},
+                    {'name': 'description', 'type': 'string'},
+                    {'name': 'type', 'type': 'string'},
+                    {'name': 'value', 'type': 'string'},
+                    {'name': 'createdAt', 'type': 'datetime'},
+                    {'name': 'updatedAt', 'type': 'datetime'},
+                    {'name': 'createdBy', 'type': 'string'},
+                    {'name': 'updatedBy', 'type': 'string'},
+                    {'name': 'organizationUnitId', 'type': 'string'},
+                    {'name': 'isDeleted', 'type': 'boolean'}
                 ]
             }
 

@@ -1,0 +1,41 @@
+[
+    {
+        "id": "1",
+        "name": "Test Context 1",
+        "description": "First test context",
+        "type": "String",
+        "value": "test value 1",
+        "createdAt": "2024-01-01T00:00:00Z",
+        "updatedAt": "2024-01-01T00:00:00Z",
+        "createdBy": "test_user",
+        "updatedBy": "test_user",
+        "organizationUnitId": "Default",
+        "isDeleted": false
+    },
+    {
+        "id": "2",
+        "name": "Test Context 2",
+        "description": "Second test context",
+        "type": "Number",
+        "value": "42",
+        "createdAt": "2024-01-02T00:00:00Z",
+        "updatedAt": "2024-01-02T00:00:00Z",
+        "createdBy": "test_user",
+        "updatedBy": "test_user",
+        "organizationUnitId": "Default",
+        "isDeleted": false
+    },
+    {
+        "id": "3",
+        "name": "Test Context 3",
+        "description": "Third test context",
+        "type": "Boolean",
+        "value": "true",
+        "createdAt": "2024-01-03T00:00:00Z",
+        "updatedAt": "2024-01-03T00:00:00Z",
+        "createdBy": "test_user",
+        "updatedBy": "test_user",
+        "organizationUnitId": "Default",
+        "isDeleted": false
+    }
+] 
