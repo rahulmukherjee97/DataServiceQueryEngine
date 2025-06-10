@@ -1,0 +1,5 @@
+# Add your ECS-specific dependencies here
+# For example:
+# ecs-python-sdk>=1.0.0 
+boto3>=1.26.0
+botocore>=1.29.0 
