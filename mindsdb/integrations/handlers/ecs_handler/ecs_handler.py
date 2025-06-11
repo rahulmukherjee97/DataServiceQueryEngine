@@ -4,6 +4,7 @@ from typing import Dict, List, Optional, Union
 import pandas as pd
 
 from mindsdb.integrations.libs.api_handler import APIHandler, APITable
+from mindsdb.integrations.utilities.sql_utils import extract_comparison_conditions
 from mindsdb.integrations.libs.response import (
     RESPONSE_TYPE,
     HandlerResponse as Response,
@@ -18,13 +19,22 @@ class ECSTable(APITable):
 
     def select(self, query: Dict) -> pd.DataFrame:
         """Handles select query to ECS API"""
-        if 'query' not in query:
-            raise ValueError("Query parameter is required for search")
-        
-        search_query = query['query']
-        schema_id = query.get('schema_id')
-        threshold = query.get('threshold', 0.45)
-        number_of_results = query.get('number_of_results', 3)
+
+
+        if query.where:
+            conditions, ops = extract_comparison_conditions(query.where, return_operations=True)
+        search_query, number_of_results, threshold, name = "uipath", 3, 0.45, "Shantanu"
+        for op, arg1, arg2 in conditions:
+            if op != '=':
+                raise ValueError(f"Unsupported operator: {op}")
+            if arg1 == 'query':
+                search_query = arg2
+            elif arg1 == 'number_of_results':
+                number_of_results = int(arg2)
+            elif arg1 == 'threshold':
+                threshold = float(arg2)
+            elif arg1 == 'schema.name':
+                name = arg2
 
         # Prepare search request
         search_request = {
@@ -32,11 +42,11 @@ class ECSTable(APITable):
                 "query": search_query,
                 "threshold": threshold,
                 "numberOfResults": number_of_results
+            },
+            "schema":{
+                "name": name
             }
         }
-        
-        if schema_id:
-            search_request["schema"] = {"id": schema_id}
 
         # Make API call
         response = self.handler.call_api(
@@ -45,16 +55,7 @@ class ECSTable(APITable):
             json=search_request
         )
 
-        # Convert response to DataFrame
-        results = []
-        for item in response.get('results', []):
-            results.append({
-                'content': item.get('content'),
-                'score': item.get('score'),
-                'metadata': json.dumps(item.get('metadata', {}))
-            })
-
-        return pd.DataFrame(results)
+        return pd.DataFrame(json.loads(response.content))
 
     def insert(self, data: Dict) -> None:
         """Handles insert query to ECS API"""
@@ -103,23 +104,24 @@ class ECSHandler(APIHandler):
 
     def __init__(self, name: str, **kwargs):
         super().__init__(name)
-        self.connection_args = kwargs.get('connection_args', {})
+        self.connection_args = kwargs.get('connection_data', {})
         
         # Validate required parameters
-        required_params = ['base_url', 'account_id', 'tenant_id', 'bearer_token', 'schema_id']
+        required_params = ['base_url', 'organization', 'tenant', 'bearer_token']
         missing_params = [param for param in required_params if not self.connection_args.get(param)]
         if missing_params:
             raise ValueError(f"Missing required parameters: {', '.join(missing_params)}")
         
-        self.base_url = self.connection_args['base_url']
-        self.account_id = self.connection_args['account_id']
-        self.tenant_id = self.connection_args['tenant_id']
+        self.api_base = self.connection_args['base_url']
+        self.organization =  self.connection_args.get("organization", None)
+        self.tenant =  self.connection_args.get("tenant", "DefaultTenant")
         self.bearer_token = self.connection_args['bearer_token']
-        self.schema_id = self.connection_args['schema_id']
+        self.base_url = '/'.join([self.api_base, self.organization, self.tenant])
+        self.ecs_url = '/'.join([self.api_base, self.organization, self.tenant,'ecs_'])
         
         # Remove trailing slash from base_url if present
-        if self.base_url.endswith('/'):
-            self.base_url = self.base_url[:-1]
+        if self.ecs_url.endswith('/'):
+            self.ecs_url = self.ecs_url[:-1]
             
         self.connected = False
         self._connect()
@@ -131,25 +133,15 @@ class ECSHandler(APIHandler):
         headers = {
             'Authorization': f'Bearer {self.bearer_token}',
             'Content-Type': 'application/json',
-            'X-UiPath-AccountId': self.account_id,
-            'X-UiPath-TenantId': self.tenant_id
         }
         kwargs['headers'] = headers
         return requests.request(method, url, **kwargs)
-
-    def _construct_ecs_url(self, endpoint: str) -> str:
-        """Construct the ECS URL using the base URL, account ID, and tenant ID."""
-        return f"{self.base_url}/{self.account_id}/{self.tenant_id}/ecs_/{endpoint}"
-
-    def _construct_identity_url(self, endpoint: str) -> str:
-        """Construct the identity URL using the base URL."""
-        return f"{self.base_url}/_identity/{endpoint}"
 
     def check_connection(self) -> StatusResponse:
         """Check the connection to the ECS service."""
         try:
             # Test the connection by making a simple API call
-            url = f"{self.base_url}/api/v1/schemas/{self.schema_id}"
+            url = f"{self.base_url}/"
             response = self.call_api('GET', url)
             if response.status_code == 200:
                 return StatusResponse(success=True)
