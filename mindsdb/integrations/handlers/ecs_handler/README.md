@@ -1,108 +1,149 @@
----
-title: UiPath Enterprise Context Service
-sidebarTitle: ECS
----
+# MindsDB ECS Handler
 
-This documentation describes the integration of MindsDB with [UiPath Enterprise Context Service (ECS)](https://docs.uipath.com/enterprise-context-service/), a service that provides a centralized way to store and manage context data across your automation projects.
+This handler integrates MindsDB with Enterprise Content Search (ECS), allowing you to perform semantic search operations on your data.
 
-## Prerequisites
+## Setup
 
-Before proceeding, ensure the following prerequisites are met:
+### Prerequisites
+- MindsDB installed
+- ECS account with access credentials
+- Bearer token for authentication
 
-1. Install MindsDB locally via [Docker](/setup/self-hosted/docker) or [Docker Desktop](/setup/self-hosted/docker-desktop).
-2. Have access to a UiPath Orchestrator instance with ECS enabled.
-3. Have valid credentials for UiPath Orchestrator.
+### Connection Parameters
 
-## Connection
-
-Establish a connection to ECS from MindsDB by executing the following SQL command:
+When connecting to ECS through MindsDB, you'll need to provide the following parameters:
 
 ```sql
-CREATE DATABASE ecs_datasource
-WITH
-  ENGINE = 'ecs',
-  PARAMETERS = {
-    "url": "https://cloud.uipath.com/your-account/your-instance/ecs",
-    "tenant": "Default",
-    "username": "your-username",
-    "password": "your-password",
-    "organization_unit": "Default"  -- Optional
-  };
+CREATE DATABASE ecs_integration
+WITH ENGINE = 'ecs',
+PARAMETERS = {
+    'base_url': 'https://alpha.uipath.com',
+    'account_id': 'your-account-id',
+    'tenant_id': 'your-tenant-id',
+    'bearer_token': 'your-bearer-token',
+    'schema_id': 'your-schema-id'
+};
 ```
 
-Required connection parameters include the following:
-
-* `url`: The URL of your UiPath ECS instance.
-* `tenant`: The tenant name in UiPath Orchestrator.
-* `username`: The username for UiPath Orchestrator authentication.
-* `password`: The password for UiPath Orchestrator authentication.
-
-Optional connection parameters include the following:
-
-* `organization_unit`: The organization unit ID in UiPath Orchestrator.
+#### Parameters Explained:
+- `base_url`: The base URL of your ECS service (e.g., 'https://alpha.uipath.com')
+- `account_id`: Your ECS account ID
+- `tenant_id`: Your ECS tenant ID
+- `bearer_token`: Authentication token for ECS
+- `schema_id`: The schema ID to use for operations (created via ECS API)
 
 ## Usage
 
-Retrieve data from ECS using SQL queries:
+### Creating a Schema
 
-```sql
--- List all contexts
-SELECT * FROM ecs_datasource.contexts;
+Before using the ECS handler, you need to create a schema in ECS. You can do this using the ECS API:
 
--- Get contexts with specific filters
-SELECT * FROM ecs_datasource.contexts 
-WHERE type = 'String' AND isDeleted = false;
-
--- Get contexts created after a specific date
-SELECT * FROM ecs_datasource.contexts 
-WHERE createdAt > '2024-01-01';
+```bash
+curl --location 'https://alpha.uipath.com/{account_id}/{tenant_id}/ecs_/v2/indexes/create' \
+--header 'Authorization: Bearer {bearer_token}' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "your_schema_name",
+    "fields": [
+        {
+            "name": "content",
+            "type": "text"
+        },
+        {
+            "name": "metadata",
+            "type": "json"
+        }
+    ]
+}'
 ```
 
-## Supported Operations
+### Querying Data
 
-The ECS handler supports the following operations:
+Once connected, you can query your ECS data using SQL:
 
-1. **SELECT Queries**
-   - List all contexts
-   - Filter contexts by various fields
-   - Sort and limit results
+```sql
+SELECT * FROM ecs_integration.ecs
+WHERE query = 'your search query'
+AND schema_id = 'your_schema_id'
+AND threshold = 0.7
+AND number_of_results = 10;
+```
 
-2. **Native Commands**
-   - `list-contexts`: List all contexts
-   - `get-context <id>`: Get a specific context by ID
-   - `create-context <json_data>`: Create a new context
-   - `update-context <id> <json_data>`: Update an existing context
-   - `delete-context <id>`: Delete a context
+### Ingesting Data
 
-## Troubleshooting Guide
+To ingest data into your ECS index:
 
-<Warning>
-`Authentication Error`
+```sql
+INSERT INTO ecs_integration.ecs (schema, data)
+VALUES (
+    'your_schema_id',
+    '{
+        "content": "your content",
+        "metadata": {"key": "value"}
+    }'
+);
+```
 
-* **Symptoms**: Failure to connect to ECS with authentication errors.
-* **Checklist**:
-    1. Verify that the URL is correct and accessible.
-    2. Confirm that the tenant name is correct.
-    3. Ensure the username and password are valid.
-    4. Check if the user has the necessary permissions in UiPath Orchestrator.
-</Warning>
+## Features
 
-<Warning>
-`Connection Error`
+- Semantic search capabilities
+- Support for metadata filtering
+- Configurable search thresholds
+- Customizable number of results
+- JSON metadata support
 
-* **Symptoms**: Failure to establish connection to ECS.
-* **Checklist**:
-    1. Ensure the ECS instance is running and accessible.
-    2. Verify network connectivity to the ECS instance.
-    3. Check if any firewall rules are blocking the connection.
-</Warning>
+## Error Handling
 
-<Warning>
-`Operation Error`
+The handler includes comprehensive error handling for:
+- Authentication failures
+- Invalid schema IDs
+- API connection issues
+- Invalid query parameters
 
-* **Symptoms**: Errors during ECS operations.
-* **Checklist**:
-    1. Verify that the context ID exists when performing operations on specific contexts.
-    2. Ensure the JSON data format is correct when creating or updating contexts.
-    3. Check if the user has the necessary permissions for the operation.
-</Warning> 
+## Examples
+
+### Basic Search
+```sql
+SELECT * FROM ecs_integration.ecs
+WHERE query = 'search term';
+```
+
+### Search with Metadata Filter
+```sql
+SELECT * FROM ecs_integration.ecs
+WHERE query = 'search term'
+AND metadata = '{"category": "documentation"}';
+```
+
+### Search with Custom Parameters
+```sql
+SELECT * FROM ecs_integration.ecs
+WHERE query = 'search term'
+AND threshold = 0.8
+AND number_of_results = 5;
+```
+
+## Troubleshooting
+
+Common issues and solutions:
+
+1. **Authentication Error**
+   - Verify your bearer token is valid
+   - Check if the token has expired
+
+2. **Schema Not Found**
+   - Ensure the schema_id exists in ECS
+   - Verify you have permissions to access the schema
+
+3. **Connection Issues**
+   - Check your base_url is correct
+   - Verify network connectivity
+   - Ensure account_id and tenant_id are correct
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details. 
