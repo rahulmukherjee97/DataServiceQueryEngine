@@ -23,8 +23,8 @@ class ECSTable(APITable):
         
         search_query = query['query']
         schema_id = query.get('schema_id')
-        threshold = query.get('threshold', 0.75)
-        number_of_results = query.get('number_of_results', 5)
+        threshold = query.get('threshold', 0.45)
+        number_of_results = query.get('number_of_results', 3)
 
         # Prepare search request
         search_request = {
@@ -126,8 +126,19 @@ class ECSHandler(APIHandler):
 
         self._register_table('ecs', ECSTable(self))
 
+    def call_api(self, method: str, url: str, **kwargs) -> requests.Response:
+        """Make an API call to the ECS service."""
+        headers = {
+            'Authorization': f'Bearer {self.bearer_token}',
+            'Content-Type': 'application/json',
+            'X-UiPath-AccountId': self.account_id,
+            'X-UiPath-TenantId': self.tenant_id
+        }
+        kwargs['headers'] = headers
+        return requests.request(method, url, **kwargs)
+
     def _construct_ecs_url(self, endpoint: str) -> str:
-        """Construct the ECS URL using the base URL, account UID, and tenant UID."""
+        """Construct the ECS URL using the base URL, account ID, and tenant ID."""
         return f"{self.base_url}/{self.account_id}/{self.tenant_id}/ecs_/{endpoint}"
 
     def _construct_identity_url(self, endpoint: str) -> str:
@@ -158,14 +169,3 @@ class ECSHandler(APIHandler):
         except Exception as e:
             self.connected = False
             raise Exception(f"Failed to connect to ECS: {str(e)}")
-
-    def call_api(self, method: str, url: str, **kwargs) -> requests.Response:
-        """Make an API call to the ECS service."""
-        headers = {
-            'Authorization': f'Bearer {self.bearer_token}',
-            'Content-Type': 'application/json',
-            'X-UiPath-AccountId': self.account_id,
-            'X-UiPath-TenantId': self.tenant_id
-        }
-        kwargs['headers'] = headers
-        return requests.request(method, url, **kwargs) ˇ
